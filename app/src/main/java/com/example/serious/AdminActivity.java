@@ -2,7 +2,9 @@ package com.example.serious;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -28,7 +30,17 @@ public class AdminActivity extends AppCompatActivity {
         main.setOrientation(LinearLayout.VERTICAL);
         sv = new ScrollView(this);
         dbHelper = new DBHelper(this);
-        sv.addView(main);
+        Button client = new Button(getApplicationContext());
+        client.setText("Перейти к клиенту");
+        client.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(AdminActivity.this, UserActivity.class );
+                i.putExtra("login", getIntent().getCharSequenceExtra("login"));
+                i.putExtra("role", 1);
+                startActivity(i);
+            }
+        });
 
 
 
@@ -49,6 +61,9 @@ public class AdminActivity extends AppCompatActivity {
 
         cursor.close();
         dbHelper.close();
+        main.addView(client);
+
+        sv.addView(main);
         setContentView(sv);
 
   /*      but.setOnClickListener(new View.OnClickListener() {
@@ -80,13 +95,13 @@ public class AdminActivity extends AppCompatActivity {
         long id;
         String login;
         String pass;
-        long role;
+        long role1;
         public User(Context context, long id, String login, String pass, long role) {
             super(context);
             this.login = login;
             this.pass = pass;
             this.id = id;
-            this.role = role;
+            this.role1 = role;
 
         }
         public LinearLayout getView (){
@@ -98,7 +113,6 @@ public class AdminActivity extends AppCompatActivity {
             Button role = new Button(getApplicationContext());
             LinearLayout knop = new LinearLayout(getApplicationContext());
             knop.setOrientation(LinearLayout.VERTICAL);
-
             LinearLayout ll = new LinearLayout(getApplicationContext());
             ll.setMinimumWidth(550);
             TextView login_tw = new TextView(getApplicationContext());
@@ -107,17 +121,37 @@ public class AdminActivity extends AppCompatActivity {
             razdel.setBackgroundColor(0xFF000000);
             razdel.setHeight(5);
             del.setText("x");
+            role.setText("ch role");
             del.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if(getIntent().getCharSequenceExtra("login").toString().equals(login) )
+                        Toast.makeText(getApplicationContext(),"Не могу изменить роль этого пользователя", Toast.LENGTH_LONG).show();
+                    else
+                    {
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        database.delete(DBHelper.TABLE_CONTACTS, DBHelper.KEY_NAME + "= \"" + login+ "\"", null);
+                      //  AdminActivity.super.onCreate(null);
+                        hor.setBackgroundColor(0xCCFF0000);
+                    }
+                }
+            });
+            role.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ContentValues contentValues = new ContentValues();
+                    if (role1==1)
+                    contentValues.put(DBHelper.KEY_ROLE, 0);
+                    else
+                    contentValues.put(DBHelper.KEY_ROLE, 1);
+
                     if(getIntent().getCharSequenceExtra("login").toString().equals(login) )
                         Toast.makeText(getApplicationContext(),"Не могу удалить этого пользователя", Toast.LENGTH_LONG).show();
                     else
                     {
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
-                        database.delete(DBHelper.TABLE_CONTACTS, DBHelper.KEY_NAME + "= \"" + login +"\"", null);
-                      //  AdminActivity.super.onCreate(null);
-                        hor.setBackgroundColor(0xCCFF0000);
+                        database.update(DBHelper.TABLE_CONTACTS, contentValues, DBHelper.KEY_NAME + "= \"" + login + "\"", null);
+                        hor.setBackgroundColor(0xCC42ffba);
                     }
                 }
             });
@@ -132,7 +166,7 @@ public class AdminActivity extends AppCompatActivity {
             ll.addView(login_tw);
             ll.addView(pass_tw);
             hor.addView(ll);
-            if (this.role ==1)
+            if (this.role1 ==1)
             {
                 ImageView img = new ImageView(getApplicationContext());
                 img.setImageResource(R.drawable.corona);

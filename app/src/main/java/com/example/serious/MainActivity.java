@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         switch (kostyl) {
                             case 1:  Intent i = new Intent(MainActivity.this, UserActivity.class);
                             i.putExtra("login", login.getText());
+                            i.putExtra("role", 0);
                             startActivity(i);
                             break;
                             case 2:  Intent i1 = new Intent(MainActivity.this, AdminActivity.class);
