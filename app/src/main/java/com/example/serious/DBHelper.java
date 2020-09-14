@@ -10,8 +10,14 @@ public class DBHelper  extends SQLiteOpenHelper{
     public static final String DATABASE_NAME = "cactus";
     public static final String TABLE_CONTACTS = "users";
 
+    public static final String TABLE_TOVS = "tovs";
+
     public static final String KEY_ID = "_id";
     public static final String KEY_NAME = "name";
+
+    public static final String KEY_COST= "cost";
+
+    public static final String KEY_KOLVO = "kolvo";
     public static final String KEY_PASS = "pass";
     public static final String KEY_ROLE = "role"; // 1 -- admin, 0 -- user
 
@@ -24,11 +30,16 @@ public class DBHelper  extends SQLiteOpenHelper{
         db.execSQL("create table " + TABLE_CONTACTS + "(" + KEY_ID
                 + " integer primary key," + KEY_NAME + " text," + KEY_PASS + " text," + KEY_ROLE + " integer" +")");
 
+        db.execSQL("create table " + TABLE_TOVS + "(" + KEY_ID
+                + " integer primary key," + KEY_NAME + " text," + KEY_KOLVO + " integer," + KEY_COST + " integer" +")");
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists " + TABLE_CONTACTS);
+
+        db.execSQL("drop table if exists " + TABLE_TOVS);
 
         onCreate(db);
 
